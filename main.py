@@ -5,18 +5,18 @@ import os
 from twofas_lib import QRCode
 
 def generate_qr_codes(file_path):
-    # Crée un dossier pour sauvegarder les QR codes
+    # Create output directory if it doesn't exist
     output_dir = "qr_codes"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    # Charge le fichier JSON
+    # Load json file
     with open(file_path, "r") as file:
         data = json.load(file)
 
-    # Parcourt chaque service dans le fichier JSON
+    # Parse json file and generate QR codes for each service
     for service in data["services"]:
-        # Crée un objet QRCode
+        # Generate QrCode object
         
         try:
             qr_code = QRCode(
@@ -29,17 +29,16 @@ def generate_qr_codes(file_path):
                     account=service["otp"]["account"],
                     )
             
+            # Generate QR code based on QrCode OTPAuth URL
             qr_img = qrcode.make(qr_code.otpauth)
             output_file = os.path.join(output_dir, f"{qr_code.issuer}.png")
             qr_img.save(output_file)
 
-            print(f"QR Code pour {qr_code.label} sauvegardé sous {output_file}")
+            print(f"QRCode {qr_code.label} saved as {output_file}")
             
         except KeyError:
-            print(f"Le fichier JSON pour {service["otp"]["label"]}n'est pas correctement formaté ou une valeur est manquante")
+            print(f"JSON file for {service['otp']['label']} is not properly formatted or a value is missing")
             
             
-
-
-# Exemple d'utilisation
+#Generate QR codes for 2fastest.json
 generate_qr_codes(".env/2fastest.json")
