@@ -5,7 +5,7 @@ import os
 class QRCode:
     def __init__(self, issuer="", secret="", account="", digits="6", period="30", algorithm="SHA1", tokenType="TOTP"):
         self.issuer = issuer                # Account issuer
-        self.tokenType= tokenType           # TOTP or HOTP
+        self.tokenType = tokenType.lower()  # totp or hotp
         self.secret = secret                # Base32 encoded secret
         self.account = account              # Account email or username
 
@@ -23,22 +23,24 @@ def generate_qr_codes(file_path,output_dir):
         data = json.load(file)
 
     # Parse json file and generate QR codes for each service
+    # Count number of services
+    print(f"Generating QR codes for {len(data['services'])} services")
     for service in data["services"]:
         # Generate QrCode object
         try:
             qr_code = QRCode(
                     secret=service["secret"],
-                    issuer=service["otp"]["issuer"],
+                    issuer=service["otp"]["issuer"] if "issuer" in service["otp"] else service["name"],
                     tokenType=service["otp"]["tokenType"],
                     digits=service["otp"]["digits"] if "digits" in service["otp"] else "6",
                     period=service["otp"]["period"] if "period" in service["otp"] else "",
                     algorithm=service["otp"]["algorithm"] if "algorithm" in service["otp"] else "SHA1",
-                    account=service["otp"]["account"],
+                    account=service["otp"]["account"] if "account" in service["otp"] else "",
                     )
             
             # Generate QR code based on QrCode OTPAuth URL
             qr_img = qrcode.make(qr_code.otpauth)
-            output_file = os.path.join(output_dir, f"{qr_code.issuer}.png")
+            output_file = os.path.join(output_dir, f"{qr_code.issuer}-{qr_code.account}.png")
             qr_img.save(output_file)
 
             print(f"QRCode {qr_code.label} saved as {output_file}")
