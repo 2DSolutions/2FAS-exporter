@@ -17,10 +17,6 @@ class QRCode:
         self.otpauth = f"otpauth://{self.tokenType}/{self.label}?secret={self.secret}&issuer={self.issuer}&digits={self.digits}&period={self.period}&algorithm={self.algorithm}"
     
 def generate_qr_codes(file_path,output_dir):
-    # Create output directory if it doesn't exist
-    
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
 
     # Load json file
     with open(file_path, "r") as file:
