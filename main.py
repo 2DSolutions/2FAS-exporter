@@ -17,7 +17,6 @@ def generate_qr_codes(file_path):
     # Parse json file and generate QR codes for each service
     for service in data["services"]:
         # Generate QrCode object
-        
         try:
             qr_code = QRCode(
                     secret=service["secret"],
@@ -38,7 +37,6 @@ def generate_qr_codes(file_path):
             
         except KeyError:
             print(f"JSON file for {service['otp']['label']} is not properly formatted or a value is missing")
-            
-            
+                 
 #Generate QR codes for 2fastest.json
 generate_qr_codes(".env/2fastest.json")
